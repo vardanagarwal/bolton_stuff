@@ -143,14 +143,17 @@ class BoltOn(optimizer_v2.OptimizerV2):
                       'context.')
     radius = self.loss.radius()
     for layer in self.layers:
-      weight_norm = tf.norm(layer.kernel, axis=0)
-      if force:
-        layer.kernel = layer.kernel / (weight_norm / radius)
-      else:
-        layer.kernel = tf.cond(
-            tf.reduce_sum(tf.cast(weight_norm > radius, dtype=self.dtype)) > 0,
-            lambda k=layer.kernel, w=weight_norm, r=radius: k / (w / r),  # pylint: disable=cell-var-from-loop
-            lambda k=layer.kernel: k  # pylint: disable=cell-var-from-loop
+        try:
+          weight_norm = tf.norm(layer.kernel, axis=0)
+          if force:
+            layer.kernel = layer.kernel / (weight_norm / radius)
+          else:
+            layer.kernel = tf.cond(
+                tf.reduce_sum(tf.cast(weight_norm > radius, dtype=self.dtype)) > 0,
+                lambda k=layer.kernel, w=weight_norm, r=radius: k / (w / r),  # pylint: disable=cell-var-from-loop
+                lambda k=layer.kernel: k  # pylint: disable=cell-var-from-loop
+        except:
+            pass
         )
 
   def get_noise(self, input_dim, output_dim):
