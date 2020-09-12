@@ -332,11 +332,14 @@ class BoltOn(optimizer_v2.OptimizerV2):
     """
     self.project_weights_to_r(True)
     for layer in self.layers:
-      input_dim = layer.kernel.shape[0]
-      output_dim = layer.units
-      noise = self.get_noise(input_dim,
-                             output_dim,
-                            )
+      try:
+        input_dim = layer.kernel.shape[0]
+        output_dim = layer.units
+        noise = self.get_noise(input_dim,
+                              output_dim,
+                              )
+      except:
+        pass
       layer.kernel = tf.math.add(layer.kernel, noise)
     self.noise_distribution = None
     self.learning_rate.de_initialize()
