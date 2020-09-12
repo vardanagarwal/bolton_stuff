@@ -338,9 +338,9 @@ class BoltOn(optimizer_v2.OptimizerV2):
         noise = self.get_noise(input_dim,
                               output_dim,
                               )
+        layer.kernel = tf.math.add(layer.kernel, noise)
       except:
         pass
-      layer.kernel = tf.math.add(layer.kernel, noise)
     self.noise_distribution = None
     self.learning_rate.de_initialize()
     self.epsilon = -1
