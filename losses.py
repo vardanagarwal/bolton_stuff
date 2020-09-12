@@ -5,7 +5,7 @@ from __future__ import print_function
 import tensorflow as tf
 from tensorflow.python.framework import ops as _ops
 from tensorflow.python.keras import losses
-from tensorflow.python.keras.regularizers import L1L2
+from tensorflow.keras.regularizers import L1L2
 from tensorflow.python.keras.utils import losses_utils
 from tensorflow.python.platform import tf_logging as logging
 
