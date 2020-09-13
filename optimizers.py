@@ -123,7 +123,7 @@ class BoltOn(optimizer_v2.OptimizerV2):
     # to get values from the loss function near the time that .fit is called
     # on the model (when this optimizer will be called as a context manager)
     self.dtype = dtype
-    self.loss = loss
+    self.add_loss = loss
     self._is_init = False
 
   def get_config(self):
