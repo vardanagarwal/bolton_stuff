@@ -3,15 +3,13 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
-from tensorflow.python.keras.optimizer_v2 import optimizer_v2
-from tensorflow.python.ops import math_ops
 from bolton_stuff.losses import StrongConvexMixin
 
 _accepted_distributions = ['laplace']  # implemented distributions for noising
 
 
 class GammaBetaDecreasingStep(
-    optimizer_v2.learning_rate_schedule.LearningRateSchedule):
+    tf.keras.optimizers.schedules.LearningRateSchedule):
   """Computes LR as minimum of 1/beta and 1/(gamma * step) at each step.
   This is a required step for privacy guarantees.
   """
@@ -40,7 +38,7 @@ class GammaBetaDecreasingStep(
     dtype = self.beta.dtype
     one = tf.constant(1, dtype)
     return tf.math.minimum(tf.math.reduce_min(one/self.beta),
-                           one/(self.gamma*math_ops.cast(step, dtype))
+                           one/(self.gamma*tf.cast(step, dtype))
                           )
 
   def get_config(self):
@@ -66,7 +64,7 @@ class GammaBetaDecreasingStep(
     self.gamma = None
 
 
-class BoltOn(optimizer_v2.OptimizerV2):
+class BoltOn(tf.keras.optimizers.Optimizer):
   """Wrap another tf optimizer with BoltOn privacy protocol.
   BoltOn optimizer wraps another tf optimizer to be used
   as the visible optimizer to the tf model. No matter the optimizer
@@ -95,7 +93,7 @@ class BoltOn(optimizer_v2.OptimizerV2):
               ):
     """Constructor.
     Args:
-      optimizer: Optimizer_v2 or subclass to be used as the optimizer
+      optimizer: Optimizer or subclass to be used as the optimizer
         (wrapped).
       loss: StrongConvexLoss function that the model is being compiled with.
       dtype: dtype
