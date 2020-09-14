@@ -71,7 +71,7 @@ class StrongConvexMixin:  # pylint: disable=old-style-class
     Returns:
       maximum class weighting as tensor scalar
     """
-    class_weight = _ops.convert_to_tensor_v2(class_weight, dtype)
+    class_weight = tf.convert_to_tensor(class_weight, dtype)
     return tf.math.reduce_max(class_weight)
 
 
