@@ -3,12 +3,8 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
-from tensorflow.python.framework import ops as _ops
-from tensorflow.python.keras import losses
+from tensorflow.keras import losses
 from tensorflow.keras.regularizers import L1L2
-from tensorflow.python.keras.utils import losses_utils
-from tensorflow.python.platform import tf_logging as logging
-
 
 class StrongConvexMixin:  # pylint: disable=old-style-class
   """Strong Convex Mixin base class.
@@ -83,7 +79,7 @@ class StrongConvexHuber(losses.Loss, StrongConvexMixin):
                c_arg,
                radius_constant,
                delta,
-               reduction=losses_utils.ReductionV2.SUM_OVER_BATCH_SIZE,
+               reduction=losses.Reduction.SUM_OVER_BATCH_SIZE,
                dtype=tf.float32):
     """Constructor.
     Args:
@@ -133,7 +129,7 @@ class StrongConvexHuber(losses.Loss, StrongConvexMixin):
     four = tf.constant(4, dtype=self.dtype)
 
     if z > one + h:  # pylint: disable=no-else-return
-      return _ops.convert_to_tensor_v2(0, dtype=self.dtype)
+      return tf.convert_to_tensor(0, dtype=self.dtype)
     elif tf.math.abs(one - z) <= h:
       return one / (four * h) * tf.math.pow(one + h - z, 2)
     return one - z
@@ -149,7 +145,7 @@ class StrongConvexHuber(losses.Loss, StrongConvexMixin):
   def beta(self, class_weight):
     """See super class."""
     max_class_weight = self.max_class_weight(class_weight, self.dtype)
-    delta = _ops.convert_to_tensor_v2(self.delta,
+    delta = tf.convert_to_tensor(self.delta,
                                       dtype=self.dtype
                                      )
     return self.C * max_class_weight / (delta *
@@ -187,7 +183,7 @@ class StrongConvexBinaryCrossentropy(
                radius_constant,
                from_logits=True,
                label_smoothing=0,
-               reduction=losses_utils.ReductionV2.SUM_OVER_BATCH_SIZE,
+               reduction=losses.Reduction.SUM_OVER_BATCH_SIZE,
                dtype=tf.float32):
     """StrongConvexBinaryCrossentropy class.
     Args:
@@ -203,10 +199,6 @@ class StrongConvexBinaryCrossentropy(
       reduction: reduction type to use. See super class
       dtype: tf datatype to use for tensor conversions.
     """
-    if label_smoothing != 0:
-      logging.warning("The impact of label smoothing on privacy is unknown. "
-                      "Use label smoothing at your own risk as it may not "
-                      "guarantee privacy.")
 
     if reg_lambda <= 0:
       raise ValueError("reg lambda: {0} must be positive".format(reg_lambda))
