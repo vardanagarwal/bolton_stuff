@@ -128,7 +128,7 @@ class BoltOn(tf.keras.optimizers.Optimizer):
     """Reroutes to _internal_optimizer. See super/_internal_optimizer."""
     return self._internal_optimizer.get_config()
 
-  def project_weights_to_r(self, force=False):
+  def project_weights_to_r(self, force=True):
     """Normalize the weights to the R-ball.
     Args:
       force: True to normalize regardless of previous weight values.
